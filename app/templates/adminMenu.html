@@ -1,0 +1,12 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+    <div class="portal">
+    <ul>
+      {% for link in privilages %}
+      <li><a href= {% link.href %}><h5> {{ link.title }}</h5></a></li>
+      {% endfor %}
+    </div>
+    </ul>
+{% endblock %}

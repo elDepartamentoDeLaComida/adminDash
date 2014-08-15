@@ -1,0 +1,36 @@
+{% extends 'index.html' %}
+
+{% block content %}
+      <form class= {% form.type %} method= {% form.type %} action= {% form.endpoint %}>
+ <label for="customerName">Customer Name:</label>
+ <input type="text" id="customerName" name="customerName">
+ <label for="customerEmail">Email:</label>
+ <input type="text" id="customerEmail" name="customerEmail">
+<table id="sales">
+  <tr>
+    <th><label for="productName">Products:</label></th>
+    <th><label for="quantity">Quantity:</label></th>
+    <th><label for="farmerInitials">Farmer Initials:</label></th>
+  </tr>
+  {% products %}
+</table>
+<button type="button" class="btn" id="addProduct">Add a Product</button>
+  <div>
+  <label for="shipping">Shipped?</label>
+  <input type="checkbox" name="shipping" value="shipped">
+  <label for="delivery">Delivery:</label>
+  <input type="text" name="delivery" id="delivery">
+</div>
+<div>
+  <label for="notes">Notes:</label>
+  <textarea id="notes" name="notes">Write any notes here</textarea>
+</div>
+<div>
+  <button id="calcTotal" class="btn" type="button">Calculate Total</button>
+</div>
+<div>
+  <label for="total">Total:</label>
+  <h3 id="total">$0</h3>
+</div>
+</form>
+{% endblock %}
