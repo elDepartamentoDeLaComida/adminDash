@@ -4,7 +4,8 @@
   <label for="farmerInitials">Farmer Initials:</label>
   <input type="text" id="farmerInitials" name="farmerInitials"/>
 </div>
-<table id="orders">
+<div class="table-responsive">
+<table class="table" id="orders">
   <tr class="labels">
     <th><label for="productName">Products:</label></th>
     <th><label for="quantity">Quantity:</label></th>
@@ -14,7 +15,7 @@
   </tr>
 
 </table>
-
+</div>
 <button type="button" class="btn btn-lrg" id="addProduct">Add a Product</button>
 <div>
   <label for="shopping">Shipping?</label>
@@ -22,7 +23,7 @@
 </div>
 <div>
   <label for="notes">Notes:</label>
-  <textarea id="notes" name="notes">Write any notes here</textarea>
+  <textarea class="form-control" rows="3"name="notes">Write any notes here</textarea>
 </div>
 <div>
   <button class="btn btn-lrg btn-primary" type="submit">Submit</button>
