@@ -4,17 +4,41 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>El Departamento Internal</title>
-    <link rel="stylesheet" type="text/css" href="<%= css %>" media="all" />
+    <link rel="stylesheet" type="text/css" href="css/vendor/normalize.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css" media="all" />
   </head>
   <body>
-    <hgroup>
-      <header>
-      <h1>El Departamento de la Comida</h1>
-      <h4 id="logStatus"></h4>
-      </header>
-    </hgroup>
-    <div id="view">
+ <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">El Departamento de la Comida</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#logout">Log-out</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+          </form>
+        </div>
+      </div>
     </div>
-    <script type="text/javascript" src="<%= js %>"></script>
+
+
+    <div class="container-fluid">
+      <div class="row">
+      </div>
+    </div>
+    <script type="text/javascript" src="app.js"></script>
   </body>
 </html>
