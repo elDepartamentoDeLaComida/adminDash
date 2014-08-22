@@ -6,15 +6,17 @@ Backbone.$ = $;
 module.exports = Backbone.Router.extend({
     routes: {
         "": handlers.login,
-        "logout": "logout",
+        "logout": handlers.logout,
         "dashboard": handlers.dashboard,
-        "dashboard/reports": "reports",
-        "dashboard/analytics": "analytics",
-        "dashboard/reminders": "reminders",
-        "employees": "employees",
-        "orders": "orders",
-        "sales": "sales",
-        "inventory": "inventory"
+        "dashboard/reports": handlers.noOp,//"reports",
+        "dashboard/analytics": handlers.noOp,//"analytics",
+        "dashboard/reminders": handlers.noOp,//"reminders",
+        "employees": handlers.noOp,//"employees",
+        "orders": handlers.noOp,//"orders",
+        "orders/log": handlers.logOrder,//"logOrder",
+        "sales": handlers.noOp,//"sales",
+        "sales/log": handlers.noOp,//"logSale",
+        "inventory": handlers.noOp//"inventory"
     },
     initialize: function (options) {
         this.app = options.app;
