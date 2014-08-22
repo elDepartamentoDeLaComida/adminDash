@@ -8,3 +8,4 @@
 **/vendor/**
 /gulp
 .sass-cache
+**/*.config.js
