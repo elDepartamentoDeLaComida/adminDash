@@ -3,8 +3,7 @@ var $ = require("jquery"),
     Router = require("../routes/router"),
     LoginView = require("./loginView"),
     SidebarView = require("./sidebarView"),
-    DashView = require("./dashView"),
-    LogOrderView = require("./logOrdersView");
+    DashView = require("./dashView");
 Backbone.$ = $;
 
 module.exports = Backbone.View.extend({
@@ -16,15 +15,18 @@ module.exports = Backbone.View.extend({
         Backbone.history.start();
     },
     startDash: function () {
-        this.$el.empty();
         if (!this.sidebar) {
             this.sidebar = new SidebarView();
+            this.$el.html(this.sidebar.el);
         }
         if (!this.dash) {
             this.dash = new DashView();
+            this.$el.append(this.dash.el);
+        } else {
+            this.sidebar.onMenuClick({target: "a[href='#dashboard']"}, true);
+            this.dash.render();
         }
-        this.$el.html(this.sidebar.el);
-        this.$el.append(this.dash.el);
+        this.listenTo(this.sidebar, "menuClick", this.handlePageReq);
     },
     startLogin: function () {
         this.$el.empty();
@@ -33,16 +35,20 @@ module.exports = Backbone.View.extend({
         }
         this.$el.html(this.login.el);
     },
-    
+
     loginSuccess: function (data) {
-        $.cookie("auth", "true");
+        $.cookie("auth", "true", {expires: 1});
         this.user = data;
         this.login.remove();
-        console.log("WIN");
+        console.log("login success");
         this.router.navigate("dashboard", {trigger: true});
     },
-    renderPage: function (page) {
-        console.log("accessing", page);
-        this.$el.html(page.el);
+
+    handlePageReq: function (page) {
+        console.log("page", page);
+        if (page.hash) {
+            console.log("accessing", page.hash);
+            this.router.navigate(page.hash, {trigger: true});
+        }
     }
 });

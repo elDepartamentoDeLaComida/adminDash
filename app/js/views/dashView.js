@@ -1,7 +1,9 @@
 var $ = require("jquery"),
     Backbone = require("backbone"),
     _ = require("underscore"),
-    util = require("../utils");
+    util = require("../utils"),
+    LogOrderView = require("./logOrdersView");
+
 Backbone.$ = $;
 
 module.exports = Backbone.View.extend({
@@ -13,10 +15,17 @@ module.exports = Backbone.View.extend({
         console.log("Initializing dash view");
         this.render();
     },
-
     render: function () {
+        this.$el.empty();
         console.log("dash render!");
         this.$el.html(this.template());
         return this;
     },
+    startLogOrder: function () {
+        this.$el.empty();
+        if (!this.logOrdersView) {
+            this.logOrdersView = new LogOrderView();
+        }
+        this.$el.html(this.logOrdersView.el);
+    }
 });

@@ -5,7 +5,7 @@ var $ = require("jquery"),
 Backbone.$ = $;
 
 module.exports = Backbone.View.extend({
-    el: "form",
+    tagName: "form",
     id: "logOrder",
     template: require("../../templates/logOrder.html"),
     rowTemplate: require("../../templates/orderRow.html"),
@@ -14,7 +14,7 @@ module.exports = Backbone.View.extend({
         this.render();
     },
     render: function () {
-        console("log order render");
+        console.log("log order render");
         this.$el.html(this.template);
         this.$(".labels").after(this.rowTemplate);
         return this;
