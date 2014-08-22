@@ -4,9 +4,12 @@ module.exports = {
             err +
             "</div>");
     },
-    checkAuth: function () {
+    checkAuth: function (self) {
         if (!($.cookie("auth"))) {
-            this.navigate("", {trigger: true});
+            self.navigate("", {trigger: true});
         }
+    },
+    keepTabActive: function (self, href) {
+        self.app.sidebar.onMenuClick({target: "a[href='" + href + "']"}, true);
     }
 };
