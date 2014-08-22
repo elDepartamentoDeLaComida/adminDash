@@ -1,40 +1,34 @@
-{% extends 'index.html' %}
+<div>
+  <label for="farmer">Farmer:</label>
+  <input type="text" id="farmer" name="farmer"/>
+  <label for="farmerInitials">Farmer Initials:</label>
+  <input type="text" id="farmerInitials" name="farmerInitials"/>
+</div>
+<table id="orders">
+  <tr class="labels">
+    <th><label for="productName">Products:</label></th>
+    <th><label for="quantity">Quantity:</label></th>
+    <th><label for="unit">Unit:</label></th>
+    <th><label for="price">Unit Price:</label></th>
+    <th><label for="productPrice">Total Price:</label></th>
+  </tr>
 
-{% block content %}
-      <form class= {% form.type %} method= {% form.type %} action= {% form.endpoint %}>
+</table>
 
-      <div>
-        <label for="farmer">Farmer:</label>
-        <input type="text" id="farmer" name="farmer"/>
-        <label for="farmerInitials">Farmer Initials:</label>
-        <input type="text" id="farmerInitials" name="farmerInitials"/>
-      </div>
-      <table id="orders">
-        <tr class="labels">
-          <th><label for="productName">Products:</label></th>
-          <th><label for="quantity">Quantity:</label></th>
-          <th><label for="unit">Unit:</label></th>
-          <th><label for="price">Unit Price:</label></th>
-          <th><label for="productPrice">Total Price:</label></th>
-        </tr>
-      {% products %}
-      </table>
+<button type="button" class="btn btn-lrg" id="addProduct">Add a Product</button>
+<div>
+  <label for="shopping">Shipping?</label>
+  <input type="checkbox" name="shipping" value="true" id="shipping">
+</div>
+<div>
+  <label for="notes">Notes:</label>
+  <textarea id="notes" name="notes">Write any notes here</textarea>
+</div>
+<div>
+  <button class="btn btn-lrg btn-primary" type="submit">Submit</button>
+</div>
+<div>
+  <label for="total">Total:</label>
+  <h3 id="total"></h3>
+</div>
 
-      <button type="button" class="btn" id="addProduct">Add a Product</button>
-      <div>
-        <label for="shopping">Shipping?</label>
-        <input type="checkbox" name="shipping" value="true" id="shipping">
-      </div>
-      <div>
-        <label for="notes">Notes:</label>
-        <textarea id="notes" name="notes">Write any notes here</textarea>
-      </div>
-      <div>
-        <button class="btn" type="submit">Submit</button>
-      </div>
-      <div>
-        <label for="total">Total:</label>
-        <h3 id="total">{{ total }}</h3>
-      </div>
-</form>
-{% endblock %}
