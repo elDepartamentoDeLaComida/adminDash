@@ -21,13 +21,13 @@ module.exports = {
         util.checkAuth(this);
         this.app.startDash();
     },
-    logOrder: function () {
+    log: function (type) {
         util.checkAuth();
         if (!this.app.dash) {
             this.app.startDash();
-            util.keepTabActive(this, "#orders/log");
+            util.keepTabActive(this, "#" + type + "/log");
         }
-        this.app.dash.startLogOrder();
+        this.app.dash.startLog(type);
     },
     noOp: function () {
         console.log("no route declared yet!");

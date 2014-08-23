@@ -1,36 +1,34 @@
-{% extends 'index.html' %}
-
-{% block content %}
-      <form class= {% form.type %} method= {% form.type %} action= {% form.endpoint %}>
+ <div>
  <label for="customerName">Customer Name:</label>
  <input type="text" id="customerName" name="customerName">
  <label for="customerEmail">Email:</label>
  <input type="text" id="customerEmail" name="customerEmail">
-<table id="sales">
-  <tr>
+ </div>
+ <div class="table-responsive">
+<table id="sales" class="table">
+  <tr class="labels">
     <th><label for="productName">Products:</label></th>
     <th><label for="quantity">Quantity:</label></th>
     <th><label for="farmerInitials">Farmer Initials:</label></th>
   </tr>
-  {% products %}
 </table>
-<button type="button" class="btn" id="addProduct">Add a Product</button>
+</div>
+<button type="button" class="btn btn-lrg" id="addProduct">Add a Product</button>
   <div>
   <label for="shipping">Shipped?</label>
   <input type="checkbox" name="shipping" value="shipped">
   <label for="delivery">Delivery:</label>
-  <input type="text" name="delivery" id="delivery">
+  <input type="number" name="delivery" id="delivery" value="0">
 </div>
 <div>
   <label for="notes">Notes:</label>
-  <textarea id="notes" name="notes">Write any notes here</textarea>
+  <textarea class="form-control" rows="3"name="notes">Write any notes here</textarea>
 </div>
 <div>
-  <button id="calcTotal" class="btn" type="button">Calculate Total</button>
+  <button class="btn btn-lrg btn-primary" type="submit">Calculate</button>
 </div>
 <div>
   <label for="total">Total:</label>
-  <h3 id="total">$0</h3>
+  <h3 id="total"></h3>
 </div>
 </form>
-{% endblock %}

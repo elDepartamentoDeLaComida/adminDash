@@ -3,6 +3,5 @@ var $ = require("jquery"),
 require("jquery.cookie");
 
 $(function () {
-    window.$ = $;
     window.app = new App();
 });

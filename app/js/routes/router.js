@@ -13,13 +13,19 @@ module.exports = Backbone.Router.extend({
         "dashboard/reminders": handlers.noOp,//"reminders",
         "employees": handlers.noOp,//"employees",
         "orders": handlers.noOp,//"orders",
-        "orders/log": handlers.logOrder,//"logOrder",
+        "orders/log": "logOrder",
         "sales": handlers.noOp,//"sales",
-        "sales/log": handlers.noOp,//"logSale",
+        "sales/log": "logSale",
         "inventory": handlers.noOp//"inventory"
     },
     initialize: function (options) {
         this.app = options.app;
         console.log("initializing router");
+    },
+    logOrder: function () {
+        handlers.log.call(this, "orders");
+    },
+    logSale: function () {
+        handlers.log.call(this, "sales");
     }
 });

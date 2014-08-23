@@ -1,3 +1,6 @@
+var $ = require("jquery");
+require("jquery.cookie");
+
 module.exports = {
     addError: function (err) {
         return ("<div class='label label-danger'>" +

@@ -15,6 +15,7 @@ module.exports = Backbone.View.extend({
         Backbone.history.start();
     },
     startDash: function () {
+        console.log("starting dash");
         if (!this.sidebar) {
             this.sidebar = new SidebarView();
             this.$el.html(this.sidebar.el);
@@ -29,6 +30,7 @@ module.exports = Backbone.View.extend({
         this.listenTo(this.sidebar, "menuClick", this.handlePageReq);
     },
     startLogin: function () {
+        console.log("starting login");
         this.$el.empty();
         if (!this.login) {
             this.login = new LoginView();

@@ -2,7 +2,7 @@ var $ = require("jquery"),
     Backbone = require("backbone"),
     _ = require("underscore"),
     util = require("../utils"),
-    LogOrderView = require("./logOrdersView");
+    LogView = require("./logView");
 
 Backbone.$ = $;
 
@@ -21,11 +21,17 @@ module.exports = Backbone.View.extend({
         this.$el.html(this.template());
         return this;
     },
-    startLogOrder: function () {
+    startLog: function (type) {
         this.$el.empty();
-        if (!this.logOrdersView) {
-            this.logOrdersView = new LogOrderView();
+        console.log("starting log", type);
+        if (type === "orders" || type === "sales") {
+            if (this.logView) {
+                this.logView.remove();
+            }
+            this.logView = new LogView({type: type});
+            this.$el.html(this.logView.el);
+        } else {
+            console.log("invalid log type");
         }
-        this.$el.html(this.logOrdersView.el);
-    }
+    },
 });
