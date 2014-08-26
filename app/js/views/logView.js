@@ -2,7 +2,8 @@ var $ = require("jquery"),
     Backbone = require("backbone"),
     _ = require("underscore"),
     util = require("../utils"),
-    ProductRowView = require("./productRowView");
+    ProductRowView = require("./productRowView"),
+    OrderCollection = require("../collections/orderRowCollection");
 Backbone.$ = $;
 
 module.exports = Backbone.View.extend({
@@ -14,18 +15,30 @@ module.exports = Backbone.View.extend({
     salesEndPoint: "/api/sales",
     events: {
         "click button[type='submit']": "submitForm",
-        "click #addProduct": "addProductRow",
-        "change input[type='number']": "update",
+        "click #addProduct": "createRow",
+        "change input[type='number']": "updateTotal",
+        "change input[type='checkbox']": "updateTotal"
     },
 
     initialize: function (options) {
         console.log("initializing log" + options.type + "form");
         this.type = options.type;
+
+        this.collection = new OrderCollection();
+
         this.getFirst = this.type === "sales" ? true : false;
         this.endPoint = this[this.type + "EndPoint"];
-        this.productRows = [];
         this.template = this[this.type + "Template"];
+
+        this.productRows = [];
         this.render();
+
+        this.ui = {
+            shippingBox: this.$("#shipping")[0],
+            shippingCosts: this.$("#shippingCosts"),
+            subtotal: this.$("#subtotal"),
+            total: this.$("#total")
+        };
     },
     createRow: function () {
         var len = this.productRows.length;
@@ -33,7 +46,7 @@ module.exports = Backbone.View.extend({
             {
                 type: this.type,
                 id: len,
-                log: this
+                logForm: this
             }
         ));
         if (len < 1) {
@@ -48,22 +61,35 @@ module.exports = Backbone.View.extend({
         this.createRow();
         return this;
     },
-    addProductRow: function () {
-        console.log("adding row");
-        this.createRow();
-    },
     req: function (method) {
+        console.log(this.$el.serialize());
         $.ajax({
+            context: this,
             url: this.endPoint,
             method: method,
             data: this.$el.serialize(),
             success: function (data) {
-                console.log("SUCCESS", data);
+                this.handleReply(this.$(".farmerInfo"), data);
+                this.$el.trigger("reset");
             },
             error: function (jqXHR) {
+                this.handleReply(this.$(".farmerInfo"), jqXHR);
                 console.log(jqXHR);
             }
         });
+    },
+    handleReply: function ($el, data) {
+        //if success
+        if (data.hasOwnProperty("logStatus")) {
+            $el.before(util.addSuccess(data.logStatus));
+            setTimeout(function () {
+                console.log("removing message");
+                $(".bg-success").empty();
+            }, 1000);
+        } else {
+            //indicates failure
+            $el.before(util.addError(data.responseJSON.message));
+        }
     },
     submitForm: function (event) {
         event.preventDefault();
@@ -75,11 +101,34 @@ module.exports = Backbone.View.extend({
             this.getFirst = false;
         }
     },
-    update: function () {
+    calcShipping: function (subtotal) {
+        var shippingCosts;
+        console.log(subtotal);
+        if (this.ui.shippingBox.checked) {
+            shippingCosts = Math.max(
+                subtotal * 0.1,
+                10
+            );
+        } else {
+            shippingCosts = 0;
+        }
+        return shippingCosts;
+    },
+    updateTotal: function () {
+        var shippingCosts, subtotal;
         console.log("product price update");
-        this.total = this.productRows.reduce(function (prev, curr) {
+        subtotal = this.productRows.reduce(function (prev, curr) {
             return prev + parseFloat(curr.total);
         }, 0);
-        this.$("#total").html(this.total);
+        if (isNaN(subtotal)) {
+            subtotal = 0;
+        }
+
+        shippingCosts = this.calcShipping(subtotal);
+        this.ui.shippingCosts.html(shippingCosts);
+        this.ui.subtotal.html(subtotal.toFixed(2));
+
+        this.total = subtotal + shippingCosts;
+        this.ui.total.html(this.total.toFixed(2));
     }
 });

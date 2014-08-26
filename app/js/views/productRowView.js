@@ -13,11 +13,11 @@ module.exports = Backbone.View.extend({
     salesTemplate: require("../../templates/saleRow.html"),
 
     ordersEvents: {
-        "change input": "update"
+        "change input": "updateTotal"
     },
     initialize: function (options) {
         this.type = options.type;
-        this.log = options.log;
+        this.logForm = options.logForm;
         this.id = options.id;
         console.log("init row type", this.type);
         this.template = this[this.type + "Template"];
@@ -35,14 +35,18 @@ module.exports = Backbone.View.extend({
     },
     delete: function (event) {
         event.preventDefault();
-        this.log.productRows.splice(this.id, 1);
-        this.log.update();
+        this.logForm.productRows.splice(this.id, 1);
+        this.logForm.updateTotal();
         this.remove();
     },
-    update: function () {
+    updateTotal: function () {
         console.log("updating");
         this.total = parseFloat(this.$(".price").val(), 10) *
             parseFloat(this.$(".quantity").val(), 10);
+
+        if (isNaN(this.total)) {
+            this.total = 0;
+        }
         this.$(".productPrice").html(this.total.toFixed(2));
     }
 
