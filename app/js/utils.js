@@ -3,9 +3,10 @@ require("jquery.cookie");
 
 module.exports = {
     addError: function (err) {
-        return ("<div class='label label-danger'>" +
+        return ("<p class='bg-danger'>" +
             err +
-            "</div>");
+            "</p>"
+        );
     },
     checkAuth: function (self) {
         if (!($.cookie("auth"))) {
@@ -14,5 +15,11 @@ module.exports = {
     },
     keepTabActive: function (self, href) {
         self.app.sidebar.onMenuClick({target: "a[href='" + href + "']"}, true);
+    },
+    addSuccess: function (message) {
+        return ("<p class='bg-success'>" +
+            message +
+            "</p>"
+        );
     }
 };
