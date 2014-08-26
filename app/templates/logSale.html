@@ -1,8 +1,6 @@
  <div>
  <label for="customerName">Customer Name:</label>
  <input type="text" id="customerName" name="customerName">
- <label for="customerEmail">Email:</label>
- <input type="text" id="customerEmail" name="customerEmail">
  </div>
  <div class="table-responsive">
 <table id="sales" class="table">
@@ -15,7 +13,7 @@
 </div>
 <button type="button" class="btn btn-lrg" id="addProduct">Add a Product</button>
   <div>
-  <label for="shipping">Shipped?</label>
+  <label for="shipping">Transportación (10% o 10$)</label>
   <input type="checkbox" name="shipping" value="shipped">
   <label for="delivery">Delivery:</label>
   <input type="number" name="delivery" id="delivery" value="0">
@@ -27,8 +25,14 @@
 <div>
   <button class="btn btn-lrg btn-primary" type="submit">Calculate</button>
 </div>
-<div>
-  <label for="total">Total:</label>
-  <h3 id="total"></h3>
+<div class="totals">
+  <label for="subtotal">Subtotal |
+    <h3 id="subtotal"></h3>
+  </label>
+  <label for="shippingCosts">Shipping Costs
+    <h3 id="shippingCosts"></h3>
+  </label>
+  <label for="total">Total:
+    <h1 id="total"></h1>
+  </label>
 </div>
-</form>

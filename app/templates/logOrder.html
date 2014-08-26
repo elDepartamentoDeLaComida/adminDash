@@ -1,11 +1,12 @@
-<div>
+<div class="farmerInfo">
   <label for="farmer">Farmer:</label>
   <input type="text" id="farmer" name="farmer"/>
-  <label for="farmerInitials">Farmer Initials:</label>
+  <label for="farmerInitials">Farmer Id:</label>
   <input type="text" id="farmerInitials" name="farmerInitials"/>
 </div>
 <div class="table-responsive">
 <table class="table" id="orders">
+  <label></label>
   <tr class="labels">
     <th><label for="productName">Products:</label></th>
     <th><label for="quantity">Quantity:</label></th>
@@ -18,8 +19,8 @@
 </div>
 <button type="button" class="btn btn-lrg" id="addProduct">Add a Product</button>
 <div>
-  <label for="shopping">Shipping?</label>
-  <input type="checkbox" name="shipping" value="true" id="shipping">
+  <label for="shipping">Transportación (10% o 10$)</label>
+  <input type="checkbox" name="transportation" value="true" id="shipping">
 </div>
 <div>
   <label for="notes">Notes:</label>
@@ -28,8 +29,15 @@
 <div>
   <button class="btn btn-lrg btn-primary" type="submit">Submit</button>
 </div>
-<div>
-  <label for="total">Total:</label>
-  <h3 id="total"></h3>
+<div class="totals">
+  <label for="subtotal">Subtotal |
+    <h3 id="subtotal"></h3>
+  </label>
+  <label for="shippingCosts">Shipping Costs
+    <h3 id="shippingCosts"></h3>
+  </label>
+  <label for="total">Total:
+    <h1 id="total"></h1>
+  </label>
 </div>
 
