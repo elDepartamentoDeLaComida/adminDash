@@ -30,6 +30,7 @@ module.exports = Backbone.View.extend({
             }
             this.logView = new LogView({type: type});
             this.$el.html(this.logView.el);
+            this.listenTo(this.logView, "reset", this.startLog);
         } else {
             console.log("invalid log type");
         }
