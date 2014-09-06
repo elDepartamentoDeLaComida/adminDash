@@ -19,6 +19,7 @@ module.exports = Backbone.View.extend({
         this.type = options.type;
         this.logForm = options.logForm;
         this.id = options.id;
+        this.model = options.model;
         console.log("init row type", this.type);
         this.template = this[this.type + "Template"];
         this.events = this[this.type + "Events"];
@@ -31,10 +32,21 @@ module.exports = Backbone.View.extend({
     render: function () {
         console.log("rendering row type", this.type);
         this.$el.html(this.template);
+        if (this.model) {
+            this.renderWithModel(this.model);
+        }
         return this;
+    },
+    renderWithModel: function (model) {
+        var attr;
+        for (attr in model.attributes) {
+            this.$("input." + attr).val(model.get(attr));
+            console.log(attr, model.get(attr));
+        }
     },
     delete: function (event) {
         event.preventDefault();
+        console.log(this.logForm);
         this.logForm.productRows.splice(this.id, 1);
         this.logForm.updateTotal();
         this.remove();

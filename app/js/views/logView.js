@@ -3,6 +3,7 @@ var $ = require("jquery"),
     _ = require("underscore"),
     util = require("../utils"),
     ProductRowView = require("./productRowView"),
+    SaleCollection = require("../collections/saleRowCollection"),
     OrderCollection = require("../collections/orderRowCollection");
 Backbone.$ = $;
 
@@ -13,19 +14,25 @@ module.exports = Backbone.View.extend({
     salesTemplate: require("../../templates/logSale.html"),
     ordersEndPoint: "/api/orders",
     salesEndPoint: "/api/sales",
+
+    salesCollection: SaleCollection,
+    ordersCollection: OrderCollection,
+
     events: {
         "click button[type='submit']": "submitForm",
         "click #addProduct": "createRow",
+        "click button[name='import']" : "importFarmerById",
         "change input[type='number']": "updateTotal",
         "change input[type='checkbox']": "updateTotal"
     },
-
+    //INTERNAL BUSINESS
     initialize: function (options) {
         console.log("initializing log" + options.type + "form");
         this.type = options.type;
 
-        this.collection = new OrderCollection();
-
+        this.collection = new this[this.type + "Collection"]();
+        this.Model = this[this.type + "Model"];
+        this.listenTo(this.collection, "add", this.renderImport);
         this.getFirst = this.type === "sales" ? true : false;
         this.endPoint = this[this.type + "EndPoint"];
         this.template = this[this.type + "Template"];
@@ -37,7 +44,8 @@ module.exports = Backbone.View.extend({
             shippingBox: this.$("#shipping")[0],
             shippingCosts: this.$("#shippingCosts"),
             subtotal: this.$("#subtotal"),
-            total: this.$("#total")
+            total: this.$("#total"),
+            status: this.$(".farmerInfo")
         };
     },
     createRow: function () {
@@ -58,49 +66,117 @@ module.exports = Backbone.View.extend({
     render: function () {
         console.log("log render type", this.type);
         this.$el.html(this.template);
-        this.createRow();
+        //this.createRow();
         return this;
     },
-    req: function (method) {
-        console.log(this.$el.serialize());
-        $.ajax({
-            context: this,
-            url: this.endPoint,
-            method: method,
-            data: this.$el.serialize(),
-            success: function (data) {
-                this.handleReply(this.$(".farmerInfo"), data);
-                this.$el.trigger("reset");
-            },
-            error: function (jqXHR) {
-                this.handleReply(this.$(".farmerInfo"), jqXHR);
-                console.log(jqXHR);
-            }
+    //END INTERNAL BUSINESS
+
+    //IMPORT BUINESS
+    importFarmerById: function (e) {
+        var endpoint,
+            error;
+        e.preventDefault();
+
+        this.farmerId = this.$("#farmerId").val();
+        endpoint = "/api/orders/t1";
+        console.log("getting import at", endpoint);
+        if (!this.farmerId) {
+            error = "Must Specify Farmer Id";
+            this.handleReply({message: error});
+        } else {
+            this.req("GET", endpoint, this.farmerId)
+                .success(function (data) {
+                    this.processImport(data[0]);
+                })
+                .error(function (jqXHR) {
+                    this.handleReply({message: jqXHR.responseJSON.message});
+                });
+        }
+    },
+    processImport: function (data) {
+        var model,
+            self = this;
+        data.products.forEach(function (product, index) {
+            model = {
+                product: product,
+                quantity: data.quantities[index],
+                price: data.prices[index],
+                unit: data.unit[index]
+            };
+            self.collection.add(new self.collection.model(model));
         });
     },
-    handleReply: function ($el, data) {
+    renderImport: function () {
+        var len,
+            self = this;
+        this.collection.forEach(function (model) {
+            len = self.productRows.length;
+            self.productRows.push(new ProductRowView({
+                type: self.type,
+                id: len,
+                logForm: self,
+                model: model
+            }));
+            self.productRows[len].updateTotal();
+            self.updateTotal();
+        });
+        if (len < 1) {
+            this.$(".labels").after(this.productRows[len].el);
+        } else {
+            this.$(".productRow:last-child").after(this.productRows[len].el);
+        }
+    },
+
+    //END IMPORT BUSINESS
+    //AJAX BUSINESS
+    req: function (method, endpoint, data) {
+        endpoint = (endpoint !== undefined ? endpoint : this.endPoint);
+        data = (data !== undefined ? data : this.$el.serialize());
+        return $.ajax({
+            context: this,
+            url: endpoint,
+            method: method,
+            data: this.$el.serialize()
+        });
+    },
+    handleReply: function (data, $el) {
         //if success
+        if (!$el) {
+            $el = this.ui.status;
+        }
         if (data.hasOwnProperty("logStatus")) {
             $el.before(util.addSuccess(data.logStatus));
             setTimeout(function () {
-                console.log("removing message");
                 $(".bg-success").empty();
             }, 1000);
         } else {
             //indicates failure
-            $el.before(util.addError(data.responseJSON.message));
+            $el.before(util.addError(data.message));
+            setTimeout(function () {
+                $(".bg-danger").empty();
+            }, 2000);
         }
     },
     submitForm: function (event) {
         event.preventDefault();
         console.log("Submitting");
         if (!this.getFirst) {
-            this.req("POST");
+            this.req("POST")
+                .success(function (data) {
+                    this.handleReply(data);
+                    this.trigger("reset", this.type);
+                })
+                .error(function (jqXHR) {
+                    this.handleReply({message: jqXHR.responseJSON.message});
+                });
         } else {
             this.req("GET");
             this.getFirst = false;
         }
     },
+
+    //END AJAX BUSINESS
+    //FORM DOM BUSINESS
     calcShipping: function (subtotal) {
         var shippingCosts;
         console.log(subtotal);
@@ -131,4 +207,5 @@ module.exports = Backbone.View.extend({
         this.total = subtotal + shippingCosts;
         this.ui.total.html(this.total.toFixed(2));
     }
+    //END DOM BUSINESS
 });
