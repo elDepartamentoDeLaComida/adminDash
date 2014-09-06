@@ -1,10 +1,10 @@
 var $ = require("jquery"),
     Backbone = require("backbone"),
-    OrderModel = require("../models/orderRowModel");
+    SaleModel = require("../models/saleRowModel");
 Backbone.$ = $;
 
 module.exports = Backbone.Collection.extend({
-    model: OrderModel,
+    model: SaleModel,
     initialize: function () {
         console.log("initializing collection");
     }
