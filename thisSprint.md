@@ -1,4 +1,5 @@
 Sprint Objectives:
+Past:
 <!-- - Divide lb options in to ratios  -->
 <!-- - Decimal point total
  --><!-- - Change shipping to transportación with explicit numbers -->
