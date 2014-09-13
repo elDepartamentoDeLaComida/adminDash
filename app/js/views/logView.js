@@ -201,7 +201,7 @@ module.exports = Backbone.View.extend({
         }
 
         shippingCosts = this.calcShipping(subtotal);
-        this.ui.shippingCosts.html(shippingCosts);
+        this.ui.shippingCosts.html(shippingCosts.toFixed(2));
         this.ui.subtotal.html(subtotal.toFixed(2));
 
         this.total = subtotal + shippingCosts;

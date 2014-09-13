@@ -20,7 +20,7 @@
 </div>
 <button type="button" class="btn btn-lrg" id="addProduct">Add a Product</button>
 <div>
-  <label for="shipping">Transportación (10% o 10$)</label>
+  <label for="shipping">Transportación (10% o $10)</label>
   <input type="checkbox" name="transportation" value="true" id="shipping">
 </div>
 <div>
@@ -31,12 +31,16 @@
   <button class="btn btn-lrg btn-primary" type="submit">Submit</button>
 </div>
 <div class="totals">
-  <label for="subtotal">Subtotal |
+  <div>
+  <label for="subtotal">Subtotal
     <h3 id="subtotal"></h3>
   </label>
-  <label for="shippingCosts">Shipping Costs
+  </div>
+  <div>
+  <label for="shippingCosts">Transportación:
     <h3 id="shippingCosts"></h3>
   </label>
+  </div>
   <label for="total">Total:
     <h1 id="total"></h1>
   </label>
