@@ -21,5 +21,8 @@ module.exports = {
             message +
             "</p>"
         );
+    },
+    addSubmit: function () {
+        return ('<button class="btn btn-lrg btn-success" type="submit">Submit</button>');
     }
 };
