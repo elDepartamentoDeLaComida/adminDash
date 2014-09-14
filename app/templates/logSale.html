@@ -1,3 +1,5 @@
+ <div id="status">
+</div>
  <div>
  <label for="customerName">Customer Name:</label>
  <input type="text" id="customerName" name="customerName">
@@ -14,16 +16,18 @@
 <button type="button" class="btn btn-lrg" id="addProduct">Add a Product</button>
   <div>
   <label for="shipping">Transportación (10% o $10)</label>
-  <input type="checkbox" name="shipping" value="shipped">
+  <input id="shipping" type="checkbox" name="transportation" value="shipped">
+  <div>
   <label for="delivery">Delivery:</label>
   <input type="number" name="delivery" id="delivery" value="0">
+  </div>
 </div>
 <div>
   <label for="notes">Notes:</label>
   <textarea class="form-control" rows="3"name="notes">Write any notes here</textarea>
 </div>
 <div>
-  <button class="btn btn-lrg btn-primary" type="submit">Calculate</button>
+  <button id="calc" class="btn btn-lrg btn-primary">Calculate</button>
 </div>
 <div class="totals">
 <div>
