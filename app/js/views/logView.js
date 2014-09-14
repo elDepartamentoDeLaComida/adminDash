@@ -23,7 +23,8 @@ module.exports = Backbone.View.extend({
         "click #addProduct": "createRow",
         "click button[name='import']" : "importFarmerById",
         "change input[type='number']": "updateTotal",
-        "change input[type='checkbox']": "updateTotal"
+        "change input[type='checkbox']": "updateTotal",
+        "click #calc": "calcTotal"
     },
     //INTERNAL BUSINESS
     initialize: function (options) {
@@ -33,19 +34,25 @@ module.exports = Backbone.View.extend({
         this.collection = new this[this.type + "Collection"]();
         this.Model = this[this.type + "Model"];
         this.listenTo(this.collection, "add", this.renderImport);
-        this.getFirst = this.type === "sales" ? true : false;
         this.endPoint = this[this.type + "EndPoint"];
         this.template = this[this.type + "Template"];
 
         this.productRows = [];
         this.render();
 
+        if (this.type === "sales") {
+            this.saleId = 0;
+        }
+        this.total = 0;
+        this.subtotal = 0;
+        this.shippingCosts = 0;
+
         this.ui = {
             shippingBox: this.$("#shipping")[0],
             shippingCosts: this.$("#shippingCosts"),
             subtotal: this.$("#subtotal"),
             total: this.$("#total"),
-            status: this.$(".farmerInfo")
+            status: this.$("#status")
         };
     },
     createRow: function () {
@@ -66,7 +73,6 @@ module.exports = Backbone.View.extend({
     render: function () {
         console.log("log render type", this.type);
         this.$el.html(this.template);
-        //this.createRow();
         return this;
     },
     //END INTERNAL BUSINESS
@@ -84,7 +90,7 @@ module.exports = Backbone.View.extend({
             error = "Must Specify Farmer Id";
             this.handleReply({message: error});
         } else {
-            this.req("GET", endpoint, this.farmerId)
+            this.req("GET", this.farmerId, endpoint)
                 .success(function (data) {
                     this.processImport(data[0]);
                 })
@@ -118,7 +124,7 @@ module.exports = Backbone.View.extend({
                 model: model
             }));
             self.productRows[len].updateTotal();
-            self.updateTotal();
+            self.updateTotal(true);
         });
         if (len < 1) {
             this.$(".labels").after(this.productRows[len].el);
@@ -129,14 +135,16 @@ module.exports = Backbone.View.extend({
 
     //END IMPORT BUSINESS
     //AJAX BUSINESS
-    req: function (method, endpoint, data) {
+    req: function (method, data, endpoint) {
         endpoint = (endpoint !== undefined ? endpoint : this.endPoint);
-        data = (data !== undefined ? data : this.$el.serialize());
+        if (!data) {
+            data = this.$el.serialize();
+        }
         return $.ajax({
             context: this,
             url: endpoint,
             method: method,
-            data: this.$el.serialize()
+            data: data
         });
     },
     handleReply: function (data, $el) {
@@ -151,7 +159,7 @@ module.exports = Backbone.View.extend({
             }, 1000);
         } else {
             //indicates failure
-            $el.before(util.addError(data.message));
+            $el.html(util.addError(data.message));
             setTimeout(function () {
                 $(".bg-danger").empty();
             }, 2000);
@@ -159,52 +167,75 @@ module.exports = Backbone.View.extend({
     },
     submitForm: function (event) {
         event.preventDefault();
-        console.log("Submitting");
-        if (!this.getFirst) {
-            this.req("POST")
-                .success(function (data) {
-                    this.handleReply(data);
-                    this.trigger("reset", this.type);
-                })
-                .error(function (jqXHR) {
-                    this.handleReply({message: jqXHR.responseJSON.message});
-                });
-        } else {
-            this.req("GET");
-            this.getFirst = false;
+        var data = false;
+        if (this.type === "sales") {
+            data = this.$el.serialize()
+                + "&_id=" + this.saleId
+                + "&subtotal=" + this.subtotal
+                + "&total=" + this.total;
         }
+        console.log("Submitting");
+        this.req("POST", data)
+            .success(function (data) {
+                this.handleReply(data);
+                this.trigger("reset", this.type);
+            })
+            .error(function (jqXHR) {
+                this.handleReply({message: jqXHR.responseJSON.message});
+            });
     },
+    calcTotal: function (event) {
+        event.preventDefault();
+        this.req("GET")
+            .success(function (data) {
 
+                this.saleId = data._id;
+                if (!($("button[type='submit']").length)) {
+                    this.addSubmitButton($("#calc"));
+                }
+                this.updateTotal(data);
+            })
+            .error(function (jqXHR) {
+                this.handleReply({message: jqXHR.responseJSON.message});
+            });
+    },
     //END AJAX BUSINESS
     //FORM DOM BUSINESS
+    addSubmitButton: function ($el) {
+        $el.after(util.addSubmit());
+    },
     calcShipping: function (subtotal) {
-        var shippingCosts;
-        console.log(subtotal);
+        var shippingCosts = 0;
         if (this.ui.shippingBox.checked) {
             shippingCosts = Math.max(
                 subtotal * 0.1,
                 10
             );
-        } else {
-            shippingCosts = 0;
         }
         return shippingCosts;
     },
-    updateTotal: function () {
-        var shippingCosts, subtotal;
-        console.log("product price update");
-        subtotal = this.productRows.reduce(function (prev, curr) {
-            return prev + parseFloat(curr.total);
-        }, 0);
-        if (isNaN(subtotal)) {
-            subtotal = 0;
+    updateTotal: function (data) {
+        if (data instanceof $.Event || data === true) {
+            if (this.type === "orders") {
+                this.subtotal = this.productRows.reduce(function (prev, curr) {
+                    return prev + parseFloat(curr.total);
+                }, 0);
+            }
+            if (isNaN(this.subtotal)) {
+                this.subtotal = 0;
+            }
+            this.shippingCosts = this.calcShipping(this.subtotal);
+            this.total = this.subtotal + this.shippingCosts;
+        } else {
+            this.subtotal = data.subtotal;
+            this.shippingCosts = data.shippingCosts;
+            this.total = data.total;
         }
-
-        shippingCosts = this.calcShipping(subtotal);
-        this.ui.shippingCosts.html(shippingCosts.toFixed(2));
-        this.ui.subtotal.html(subtotal.toFixed(2));
-
-        this.total = subtotal + shippingCosts;
+        this.renderTotal();
+    },
+    renderTotal: function () {
+        this.ui.shippingCosts.html(this.shippingCosts.toFixed(2));
+        this.ui.subtotal.html(this.subtotal.toFixed(2));
         this.ui.total.html(this.total.toFixed(2));
     }
     //END DOM BUSINESS
